@@ -74,7 +74,7 @@ void MainWindow::on_btn_FIlePrint_clicked()
 
     QDialog* dialog = new QDialog(this);
     dialog->setWindowTitle("PrintFile");
-    dialog->resize(400,400);
+    dialog->resize(500,550);
 
     QTextEdit* edit = new QTextEdit(dialog);
     edit->setReadOnly(true);
