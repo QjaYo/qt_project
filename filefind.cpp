@@ -60,7 +60,7 @@ void FileFind::on_pushButton_clicked()
     }
     else
     {
-        QMessageBox::warning(this, "FileFind", "No match found");
+        QMessageBox::information(this, "FileFind", "No match found");
     }
 }
 

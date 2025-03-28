@@ -100,20 +100,20 @@ void FileInsert::on_btn_insert_clicked()
     QStringList lines = currentContent.split('\n');
     if (line < 1 || line > lines.size())
     {
-        QMessageBox::warning(this, "Insert", "Invalid line number.");
+        QMessageBox::critical(this, "Insert", "Invalid line number.");
         return;
     }
 
     QString targetLine = lines[line - 1];
     if (col < 0 || col > targetLine.length())
     {
-        QMessageBox::warning(this, "Insert", "Invalid column number.");
+        QMessageBox::critical(this, "Insert", "Invalid column number.");
         return;
     }
 
     int confirm = QMessageBox::question(this, "Insert", QString("Insert \"%1\" at line %2, column %3?").arg(input).arg(line).arg(col));
 
-    if (confirm != QMessageBox::Yes)
+    if (confirm == QMessageBox::No)
         return;
 
     lines[line - 1].insert(col, input);
@@ -130,7 +130,7 @@ void FileInsert::on_btn_insert_clicked()
     }
     else
     {
-        QMessageBox::warning(this, "Insert", "Failed to write to temp.txt.");
+        QMessageBox::critical(this, "Insert", "Failed to write to temp.txt.");
     }
 
     ui->fileContent->setPlainText(currentContent);

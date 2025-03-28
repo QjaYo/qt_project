@@ -23,12 +23,6 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void initprogram()
-{
-    QString filePath = defaultPath + "temp.txt";
-    QFile file(filePath);
-}
-
 void MainWindow::on_btn_FileLoad_clicked()
 {
     QString filename = QInputDialog::getText(this, "Fileload", "Enter file name.");
@@ -50,16 +44,18 @@ void MainWindow::on_btn_FileLoad_clicked()
                 save = true;
             }
             else
-                QMessageBox::warning(this, "FileLoad", "File opened, but failed to create temp file.");
+            {
+                QMessageBox::critical(this, "FileLoad", "File opened, but failed to create temp file.");
+            }
         }
         else
         {
-            QMessageBox::warning(this, "FileLoad", "File load failed.");
+            QMessageBox::critical(this, "FileLoad", "File load failed.");
         }
     }
     else
     {
-        QMessageBox::warning(this, "FileLoad", "File load failed.");
+        QMessageBox::critical(this, "FileLoad", "File load failed.");
     }
 }
 
@@ -68,12 +64,18 @@ void MainWindow::on_btn_FIlePrint_clicked()
     QFile file(tempFilePath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
-        QMessageBox::warning(this, "FilePrint", "File is not loaded yet.");
+        QMessageBox::critical(this, "FilePrint", "File is not loaded yet.");
         return;
     }
 
+    QMessageBox* loadingMsg = new QMessageBox::information(this, "FileLoad", "File Loading...");
+    //loadingMsg->setStandardButtons(QMessageBox::NoButton);
+    loadingMsg->show();
+    QApplication::processEvents();
+
     QTextStream in(&file);
     QString content = in.readAll();
+    //QTextStream[readAll, readLine, read, <<, >> setCodec, setRealNumberPrecision)
     file.close();
 
     QDialog* dialog = new QDialog(this);
@@ -82,7 +84,6 @@ void MainWindow::on_btn_FIlePrint_clicked()
 
     QTextEdit* edit = new QTextEdit(dialog);
     edit->setReadOnly(true);
-    //QMessageBox::information(this, "FilePrint", "file loading... Please wait");
     edit->setText(content);
 
 
@@ -97,7 +98,7 @@ void MainWindow::on_btn_FileFind_clicked()
     QFile file(tempFilePath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
-        QMessageBox::warning(this, "FilePrint", "File is not loaded yet.");
+        QMessageBox::critical(this, "FilePrint", "File is not loaded yet.");
         return;
     }
 
@@ -115,7 +116,7 @@ void MainWindow::on_btn_Exit_clicked()
 {
     if (save == false)
     {
-        int answer = QMessageBox::question(this, "Exit", "File is not saved. Quit anyway?", QMessageBox::Yes | QMessageBox::No);
+        int answer = QMessageBox::warning(this, "Exit", "File is not saved. Quit anyway?", QMessageBox::Yes | QMessageBox::No);
         if (answer == QMessageBox::No)
             return;
     }
@@ -125,7 +126,7 @@ void MainWindow::on_btn_Exit_clicked()
         if (QFile::remove(tempFilePath))
             qDebug() << "temp file successfully deleted.";
         else
-            QMessageBox::warning(this, "Exit", "Failed to delete temp file.");
+            QMessageBox::critical(this, "Exit", "Failed to delete temp file.");
     }
     close();
 }
@@ -136,7 +137,7 @@ void MainWindow::on_btn_FileInsert_clicked()
     QFile file(tempFilePath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
-        QMessageBox::warning(this, "FileInsert", "Failed to open file.");
+        QMessageBox::critical(this, "FileInsert", "Failed to open file.");
         return;
     }
 
@@ -151,12 +152,12 @@ void MainWindow::on_btn_FileInsert_clicked()
 void MainWindow::on_btn_FileSave_clicked()
 {
     if (originalFilePath.isEmpty()) {
-        QMessageBox::warning(this, "FileSave", "File is not loaded yet.");
+        QMessageBox::critical(this, "FileSave", "File is not loaded yet.");
         return;
     }
 
     if (!QFile::exists(tempFilePath)) {
-        QMessageBox::warning(this, "FileSave", "Temp file missing.");
+        QMessageBox::critical(this, "FileSave", "Temp file missing.");
         return;
     }
 
@@ -168,7 +169,7 @@ void MainWindow::on_btn_FileSave_clicked()
         save = true;
         QMessageBox::information(this, "Save", "File saved successfully.");
     } else {
-        QMessageBox::warning(this, "Save", "Failed to save file.");
+        QMessageBox::critical(this, "Save", "Failed to save file.");
     }
 }
 
