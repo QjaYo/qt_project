@@ -15,7 +15,6 @@ class FileInsert;
 class FileInsert : public QDialog
 {
     Q_OBJECT
-    QString currentContent;
 
 public:
     explicit FileInsert(QWidget *parent = nullptr);
@@ -25,6 +24,7 @@ public:
 
 private:
     Ui::FileInsert *ui;
+    QString currentContent;
 
 private slots:
     void on_edit_line_textChanged(const QString &);

@@ -35,6 +35,10 @@ private slots:
 
     void on_btn_FileSave_clicked();
 
+    void on_btn_FileUpdate_clicked();
+
+    void on_btn_FileDelele_clicked();
+
 private:
     Ui::MainWindow *ui;
 };

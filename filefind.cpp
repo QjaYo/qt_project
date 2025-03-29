@@ -18,13 +18,12 @@ FileFind::~FileFind()
 
 void FileFind::setFileContent(const QString &content)
 {
-    ui->fileContent->setPlainText(content);
+    FileFind::ui->fileContent->setPlainText(content);
 }
 
-void FileFind::on_pushButton_clicked()
+void FileFind::on_btn_find_clicked()
 {
-    QString target = ui->lineEdit->text();
-    QString content = ui->fileContent->toPlainText();
+    QString target = ui->lineEdit_find->text();
 
     if (target.isEmpty())
     {
@@ -44,6 +43,7 @@ void FileFind::on_pushButton_clicked()
 
     int count = 0;
     cursor = QTextCursor(ui->fileContent->document());
+
     while (true)
     {
         cursor = ui->fileContent->document()->find(target, cursor, QTextDocument::FindCaseSensitively);

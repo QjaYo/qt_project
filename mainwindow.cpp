@@ -1,8 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-
 #include "filefind.h"
 #include "fileinsert.h"
+#include "fileupdate.h"
+#include "filedelete.h"
 
 #include <QinputDialog>
 #include <QMessageBox>
@@ -20,6 +21,8 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    if (QFile::exists(tempFilePath))
+        QFile::remove(tempFilePath);
     delete ui;
 }
 
@@ -68,28 +71,40 @@ void MainWindow::on_btn_FIlePrint_clicked()
         return;
     }
 
-    QMessageBox* loadingMsg = new QMessageBox::information(this, "FileLoad", "File Loading...");
-    //loadingMsg->setStandardButtons(QMessageBox::NoButton);
-    loadingMsg->show();
+    //로딩창 열기
+    QDialog* loadingDialog = new QDialog(this);
+    loadingDialog->setWindowTitle("FilePrint");
+    loadingDialog->resize(100, 70);
+    loadingDialog->setWindowModality(Qt::ApplicationModal);
+    loadingDialog->setAttribute(Qt::WA_DeleteOnClose);
+
+    QVBoxLayout* loadingLayout = new QVBoxLayout(loadingDialog); //layout->dialog연결
+    loadingDialog->setLayout(loadingLayout); //dialog->layout 연결
+    loadingLayout->addWidget(new QLabel("loading...", loadingDialog), 0, Qt::AlignCenter); //layout에 widget하나를 추가
+
+    loadingDialog->show();
     QApplication::processEvents();
 
+    //파일 읽기
     QTextStream in(&file);
     QString content = in.readAll();
-    //QTextStream[readAll, readLine, read, <<, >> setCodec, setRealNumberPrecision)
+    //QTextStream[readAll, readLine, read, <<, >> setCodec, setRealNumberPrecision]
     file.close();
 
     QDialog* dialog = new QDialog(this);
     dialog->setWindowTitle("PrintFile");
     dialog->resize(500,550);
 
-    QTextEdit* edit = new QTextEdit(dialog);
-    edit->setReadOnly(true);
-    edit->setText(content);
+    QTextEdit* contentbox = new QTextEdit(dialog);
+    contentbox->setReadOnly(true);
+    contentbox->setText(content);
 
-
-    QVBoxLayout* layout = new QVBoxLayout(dialog);
-    layout->addWidget(edit);
+    QHBoxLayout* layout = new QHBoxLayout(dialog);
+    layout->addWidget(contentbox);
     dialog->setLayout(layout);
+
+    //로딩창 닫기
+    loadingDialog->close();
     dialog->exec();
 }
 
@@ -102,35 +117,29 @@ void MainWindow::on_btn_FileFind_clicked()
         return;
     }
 
+    QDialog* loadingDialog = new QDialog(this);
+    loadingDialog->setWindowTitle("FilePrint");
+    loadingDialog->resize(100, 70);
+    loadingDialog->setWindowModality(Qt::ApplicationModal);
+    loadingDialog->setAttribute(Qt::WA_DeleteOnClose);
+
+    QVBoxLayout* loadingLayout = new QVBoxLayout(loadingDialog); //layout->dialog연결
+    loadingDialog->setLayout(loadingLayout); //dialog->layout 연결
+    loadingLayout->addWidget(new QLabel("loading...", loadingDialog), 0, Qt::AlignCenter); //layout에 widget하나를 추가
+
+    loadingDialog->show();
+    QApplication::processEvents();
+
     QTextStream in(&file);
     QString content = in.readAll();
     file.close();
 
     FileFind dialog(this);
     dialog.setFileContent(content);
+
+    loadingDialog->close();
     dialog.exec();
 }
-
-
-void MainWindow::on_btn_Exit_clicked()
-{
-    if (save == false)
-    {
-        int answer = QMessageBox::warning(this, "Exit", "File is not saved. Quit anyway?", QMessageBox::Yes | QMessageBox::No);
-        if (answer == QMessageBox::No)
-            return;
-    }
-
-    if (QFile::exists(tempFilePath))
-    {
-        if (QFile::remove(tempFilePath))
-            qDebug() << "temp file successfully deleted.";
-        else
-            QMessageBox::critical(this, "Exit", "Failed to delete temp file.");
-    }
-    close();
-}
-
 
 void MainWindow::on_btn_FileInsert_clicked()
 {
@@ -141,14 +150,100 @@ void MainWindow::on_btn_FileInsert_clicked()
         return;
     }
 
+    //로딩창 열기
+    QDialog* loadingDialog = new QDialog(this);
+    loadingDialog->setWindowTitle("FilePrint");
+    loadingDialog->resize(100, 70);
+    loadingDialog->setWindowModality(Qt::ApplicationModal);
+    loadingDialog->setAttribute(Qt::WA_DeleteOnClose);
+
+    QVBoxLayout* loadingLayout = new QVBoxLayout(loadingDialog); //layout->dialog연결
+    loadingDialog->setLayout(loadingLayout); //dialog->layout 연결
+    loadingLayout->addWidget(new QLabel("loading...", loadingDialog), 0, Qt::AlignCenter); //layout에 widget하나를 추가
+
+    loadingDialog->show();
+    QApplication::processEvents();
+
     QTextStream in(&file);
     QString content = in.readAll();
     file.close();
 
     FileInsert dialog(this);
     dialog.setFileContent(content);
+
+    loadingDialog->close();
     dialog.exec();
 }
+
+void MainWindow::on_btn_FileUpdate_clicked()
+{
+    QFile file(tempFilePath);
+    if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        QMessageBox::critical(this, "FileUpdate", "Failed to open file.");
+        return;
+    }
+
+    //로딩창 열기
+    QDialog* loadingDialog = new QDialog(this);
+    loadingDialog->setWindowTitle("FilePrint");
+    loadingDialog->resize(100, 70);
+    loadingDialog->setWindowModality(Qt::ApplicationModal);
+    loadingDialog->setAttribute(Qt::WA_DeleteOnClose);
+
+    QVBoxLayout* loadingLayout = new QVBoxLayout(loadingDialog); //layout->dialog연결
+    loadingDialog->setLayout(loadingLayout); //dialog->layout 연결
+    loadingLayout->addWidget(new QLabel("loading...", loadingDialog), 0, Qt::AlignCenter); //layout에 widget하나를 추가
+
+    loadingDialog->show();
+    QApplication::processEvents();
+
+    QTextStream in(&file);
+    QString content = in.readAll();
+    file.close();
+
+    FileUpdate dialog(this);
+    dialog.setFileContent(content);
+
+    loadingDialog->close();
+    dialog.exec();
+}
+
+
+void MainWindow::on_btn_FileDelele_clicked()
+{
+    QFile file(tempFilePath);
+    if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        QMessageBox::critical(this, "FileUpdate", "Failed to open file.");
+        return;
+    }
+
+    //로딩창 열기
+    QDialog* loadingDialog = new QDialog(this);
+    loadingDialog->setWindowTitle("FilePrint");
+    loadingDialog->resize(100, 70);
+    loadingDialog->setWindowModality(Qt::ApplicationModal);
+    loadingDialog->setAttribute(Qt::WA_DeleteOnClose);
+
+    QVBoxLayout* loadingLayout = new QVBoxLayout(loadingDialog); //layout->dialog연결
+    loadingDialog->setLayout(loadingLayout); //dialog->layout 연결
+    loadingLayout->addWidget(new QLabel("loading...", loadingDialog), 0, Qt::AlignCenter); //layout에 widget하나를 추가
+
+    loadingDialog->show();
+    QApplication::processEvents();
+
+    QTextStream in(&file);
+    QString content = in.readAll();
+    file.close();
+
+    FileDelete dialog(this);
+    dialog.setFileContent(content);
+
+    loadingDialog->close();
+    dialog.exec();
+}
+
 void MainWindow::on_btn_FileSave_clicked()
 {
     if (originalFilePath.isEmpty()) {
@@ -173,3 +268,13 @@ void MainWindow::on_btn_FileSave_clicked()
     }
 }
 
+void MainWindow::on_btn_Exit_clicked()
+{
+    if (save == false)
+    {
+        int answer = QMessageBox::warning(this, "Exit", "File is not saved. Quit anyway?", QMessageBox::Yes | QMessageBox::No);
+        if (answer == QMessageBox::No)
+            return;
+    }
+    this->close();
+}

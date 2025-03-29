@@ -9,19 +9,25 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    filedelete.cpp \
     filefind.cpp \
     fileinsert.cpp \
+    fileupdate.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
+    filedelete.h \
     filefind.h \
     fileinsert.h \
+    fileupdate.h \
     mainwindow.h
 
 FORMS += \
+    filedelete.ui \
     filefind.ui \
     fileinsert.ui \
+    fileupdate.ui \
     mainwindow.ui
 
 # Default rules for deployment.

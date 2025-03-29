@@ -1,5 +1,5 @@
 #include "fileinsert.h"
-#include "ui_fileinsert.h"
+#include"ui_fileinsert.h"
 
 #include <QMessageBox>
 #include <QFile>
@@ -29,15 +29,15 @@ void FileInsert::updateMarkerPreview()
     if (!ui || !ui->fileContent)
         return;
 
-    QString lineStr = ui->edit_line->text();
+    QString lineStr = ui->lineEdit_line->text();
     QString colStr = ui->label_column->text();
     if (lineStr.isEmpty() || colStr.isEmpty()) {
         ui->fileContent->setPlainText(currentContent);
         return;
     }
 
-    int line = ui->edit_line->text().toInt();
-    int col = ui->edit_column->text().toInt();
+    int line = ui->lineEdit_line->text().toInt();
+    int col = ui->lineEdit_column->text().toInt();
 
     QStringList lines = currentContent.split('\n');
 
@@ -92,10 +92,10 @@ void FileInsert::on_edit_column_textChanged(const QString &)
 
 void FileInsert::on_btn_insert_clicked()
 {
-    int line = ui->edit_line->text().toInt();
-    int col = ui->edit_column->text().toInt();
+    int line = ui->lineEdit_line->text().toInt();
+    int col = ui->lineEdit_column->text().toInt();
 
-    QString input = ui->edit_insert->text();
+    QString input = ui->lineEdit_insert->text();
 
     QStringList lines = currentContent.split('\n');
     if (line < 1 || line > lines.size())

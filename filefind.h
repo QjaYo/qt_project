@@ -21,10 +21,11 @@ public:
     void setFileContent(const QString &content);
 
 private slots:
-    void on_pushButton_clicked();
+    void on_btn_find_clicked();
 
 private:
     Ui::FileFind *ui;
+    QString currentContent;
 };
 
 #endif // FILEFIND_H
